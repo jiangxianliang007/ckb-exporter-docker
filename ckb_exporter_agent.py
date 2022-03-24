@@ -76,36 +76,31 @@ class RpcGet(object):
 def rpc_get():
     CKB_Chain = CollectorRegistry(auto_describe=False)
     Get_CKB_Info = Gauge("Get_LastBlockInfo",
-                                   "Get LastBlockInfo, label include last_block_hash, last_blocknumber, total_tx_cycles, total_tx_size. value is last_block_timestamp;",
-                                   ["last_block_hash", "last_block_number", "last_block_tx_cycles", "last_block_tx_size", "last_block_timestamp"],
+                                   "Get LastBlockInfo, Show ckb latest block height",
+                                   ["ckb_rpc"],
                                    registry=CKB_Chain)
     Get_CKB_TX_Pool = Gauge("Get_CKBtotal_tx_size",
                                    "Get_CKBtotal_tx_size, Current trading pool usage size",
-                                   ["ckb_total_tx_size"],
+                                   ["ckb_rpc"],
                                    registry=CKB_Chain)
     Get_CKB_Indexer_Info = Gauge("Get_indexerLastBlockInfo",
-                                   "Get LastBlockInfo, label include last_block_hash, last_blocknumber. value is last_block_timestamp;",
-                                   ["last_block_hash", "last_block_number"],
+                                   "Get LastBlockInfo, Show ckb indexer latest block height",
+                                   ["ckb_indexer_rpc"],
                                    registry=CKB_Chain)
 
     get_result = RpcGet(CKB_RPC,CKB_INDEXER_RPC)
     ckb_last_block_info = get_result.get_ckb_Info()
     Get_CKB_Info.labels(
-        last_block_hash=ckb_last_block_info["last_block_hash"],
-        last_block_number=ckb_last_block_info["last_blocknumber"],
-        last_block_tx_cycles=ckb_last_block_info["total_tx_cycles"],
-        last_block_tx_size=ckb_last_block_info["total_tx_size"],
-        last_block_timestamp=ckb_last_block_info["last_block_timestamp"]
+        ckb_rpc=CKB_RPC
     ).set(ckb_last_block_info["last_blocknumber"])
     
     Get_CKB_TX_Pool.labels(
-        ckb_total_tx_size=ckb_last_block_info["total_tx_size"]
+        ckb_rpc=CKB_RPC
     ).set(ckb_last_block_info["total_tx_size"]) 
  
     indexer_last_block_info = get_result.get_ckb_indexer_Info()
     Get_CKB_Indexer_Info.labels(
-        last_block_hash=indexer_last_block_info["last_block_hash"],
-        last_block_number=indexer_last_block_info["last_blocknumber"],
+        ckb_indexer_rpc=CKB_INDEXER_RPC
     ).set(indexer_last_block_info["last_blocknumber"])
     return Response(prometheus_client.generate_latest(CKB_Chain), mimetype="text/plain")
 
