@@ -54,7 +54,7 @@ class RpcGet(object):
 
     def get_ckb_indexer_Info(self):
         headers = {"Content-Type":"application/json"}
-        data = '{"id":2, "jsonrpc":"2.0", "method":"get_tip", "params":[]}'
+        data = '{"id":2, "jsonrpc":"2.0", "method":"get_indexer_tip", "params":[]}'
         try:
             r = requests.post(
                 url="%s" %(self.CKB_INDEXER_RPC),
